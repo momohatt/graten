@@ -1,0 +1,6 @@
+val t1 : x:int -> y:int -> tensor([x; y])
+val t2 : x:int -> y:int -> tensor([x; y])
+val t3 : x:int -> y:int -> z:int -> tensor([x; y; z])
+val t4 : x:int -> y:int -> z:int -> tensor([x; y; z])
+val f1 : int -> tensor([2])
+val f2 : n:int -> tensor([2 * n + 2])

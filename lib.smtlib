@@ -1,0 +1,92 @@
+(define-fun-rec append
+ ((l1 (List Int))
+  (l2 (List Int)))
+ (List Int)
+ (ite (= l1 nil)
+      l2
+      (insert (head l1) (append (tail l1) l2))))
+
+(define-fun-rec last
+ ((l (List Int))) Int
+ (ite (= (tail l) nil)
+      (head l)
+      (last (tail l))))
+
+(define-fun-rec len
+ ((l (List Int))) Int
+ (ite (= l nil)
+      0
+      (+ 1 (len (tail l)))))
+
+(define-fun-rec nth
+ ((n Int)
+  (l (List Int)))
+ Int
+ (ite (<= n 0)
+      (head l)
+      (nth (- n 1) (tail l))))
+
+(define-fun-rec insertAt
+ ((n Int)
+  (x Int)
+  (l (List Int)))
+ (List Int)
+ (ite (<= n 0)
+      (insert x l)
+      (insert (head l) (insertAt (- n 1) x (tail l)))))
+
+(define-fun-rec dropAt
+ ((n Int)
+  (l (List Int)))
+ (List Int)
+ (ite (<= n 0)
+      (tail l)
+      (insert (head l) (dropAt (- n 1) (tail l)))))
+
+(define-fun swap2
+ ((n Int)
+  (m Int)
+  (l (List Int)))
+ (List Int)
+ (insertAt n (nth m l) (dropAt n (insertAt m (nth n l) (dropAt m l)))))
+
+(define-fun swap
+ ((n Int)
+  (m Int)
+  (l (List Int)))
+ (List Int)
+ (swap2 (ite (< n 0) (+ (len l) n) n) (ite (< m 0) (+ (len l) m) m) l))
+
+(define-fun-rec prod
+ ((l (List Int))) Int
+ (ite (= l nil)
+      1
+      (* (head l) (prod (tail l)))))
+
+(define-fun-rec init
+ ((l (List Int))) (List Int)
+ (ite (= l nil)
+      nil
+      (ite (= (tail l) nil)
+           nil
+           (insert (head l) (init (tail l))))))
+
+; TODO
+(define-fun reshape
+ ((l1 (List Int))
+  (l2 (List Int))) (List Int)
+ l2)
+
+; TODO
+(define-fun broadcast
+ ((l1 (List Int))
+  (l2 (List Int))) (List Int)
+ l2)
+
+(define-fun reshapeable
+ ((l1 (List Int))
+  (l2 (List Int))) Bool (= (prod l1) (prod l2)))
+
+(define-fun broadcastable
+ ((l1 (List Int))
+  (l2 (List Int))) Bool (= l1 l2))

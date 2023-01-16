@@ -1,0 +1,63 @@
+name: test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - uses: haskell/actions/setup@v2
+
+    - name: Stack init
+      run: stack init
+
+    - name: Cache
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-stack
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - run: |
+        Z3_URL=https://github.com/Z3Prover/z3/releases/download/z3-4.8.10/z3-4.8.10-x64-ubuntu-18.04.zip
+        echo "z3_url=$Z3_URL" >> $GITHUB_ENV
+        echo "z3_dir=$(basename $Z3_URL .zip)" >> $GITHUB_ENV
+        echo "$HOME/z3-4.8.10-x64-ubuntu-18.04/bin" >> $GITHUB_PATH
+
+    - name: Cache Z3
+      id: cache-z3
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-z3
+      with:
+        path: ~/${{env.z3_dir}}
+        key: ${{ runner.os }}-cache-z3-4.8.10
+        restore-keys: ${{ runner.os }}-cache-z3-4.8.10
+
+    - name: Install Z3 if not cached
+      if: steps.cache-z3.outputs.cache-hit != 'true'
+      run: |
+        cd $HOME
+        wget ${{env.z3_url}}
+        unzip ${{env.z3_dir}}.zip
+
+    - run: |
+        which z3
+        z3 --version
+
+    - name: Run tests
+      run: stack test --system-ghc --extra-include-dirs="$HOME/${{env.z3_dir}}/include" --extra-lib-dirs="$HOME/${{env.z3_dir}}/bin"
