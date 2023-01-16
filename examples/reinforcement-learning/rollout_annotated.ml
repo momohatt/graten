@@ -57,7 +57,7 @@ type t (num_steps, num_stack, num_procs) =
 let create ~atari_game ~num_steps ~num_stack ~num_procs =
   let frame_stack = Frame_stack.create ~num_procs ~num_stack in
   let envs = E.create atari_game ~num_processes:num_procs in
-  let obs : tensor([num_procs; 1; 84; 84]) = E.reset envs in (* ANNOT: 1 *)
+  let obs (* : tensor ([num_procs; 1; 84; 84]) *) = E.reset envs in
   Tensor.print_shape obs ~name:"obs";
   ignore (Frame_stack.update frame_stack obs ~masks:(Tensor.ones [num_procs])); (* EDIT: add 'masks' *)
   let s_states =

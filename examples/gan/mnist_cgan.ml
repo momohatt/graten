@@ -72,7 +72,7 @@ let () =
     (* Generate some regular one-hot encoded labels. *)
     List.init (batch_size * label_count) ~f:(fun i ->
       if i % label_count = i / label_count % label_count then 1.0 else 0.0)
-    |> Tensor.float_vec
+    |> Tensor.float_vec (* : tensor([batch_size * label_count]) *)
     |> Tensor.reshape ~shape:[ batch_size; label_count ]
   in
   let generator xs =

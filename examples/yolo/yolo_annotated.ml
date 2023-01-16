@@ -104,7 +104,7 @@ let report predictions ~image ~width ~height =
       let ymin = resize_and_clamp b.ymin ~initial_max:initial_height ~max:height in
       let ymax = resize_and_clamp b.ymax ~initial_max:initial_height ~max:height in
       let color = colors.(b.class_index % Array.length colors) in
-      let color = Tensor.((of_float1 color : tensor([3])) |> reshape ~shape:[ 1; 3; 1; 1 ]) in (* ANNOT: 1 *)
+      let color = Tensor.(of_float1 color |> reshape ~shape:[ 1; 3; 1; 1 ]) in
       let draw_rect xmin xmax ymin ymax =
         Tensor.narrow image ~dim:3 ~start:xmin ~length:(xmax - xmin)
         |> Tensor.narrow ~dim:2 ~start:ymin ~length:(ymax - ymin)

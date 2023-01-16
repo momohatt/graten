@@ -133,7 +133,7 @@ let write_samples samples ~filename =
   |> Torch_vision.Image.write_image ~filename
 
 let grad2 d_out x_in =
-  let grad_dout : tensor(x_in.shape) = (* ANNOT: 1 *)
+  let grad_dout (* : tensor(x_in.shape) *) =
     Tensor.run_backward [ Tensor.sum d_out ] [ x_in ] ~create_graph:true ~keep_graph:true
     (* EDIT: Replace List.hd_exn with List.hd_exn_t *)
     |> List.hd_exn_t
@@ -149,7 +149,7 @@ let () =
   let bce_loss_with_logits ys ~target =
     Tensor.bce_loss (Tensor.sigmoid ys) ~targets:Tensor.(ones_like ys * f target)
   in
-  let images : { v:tensor | len v.shape = 4 && nth 1 v.shape = 3 && nth 2 v.shape = 128 && nth 3 v.shape = 128 } = Serialize.load ~filename:Sys.argv.(1) in (* ANNOT: 1 *)
+  let images = Serialize.load ~filename:Sys.argv.(1) in
   let train_size = Tensor.shape images |> List.hd_exn in
   let generator_vs = Var_store.create ~name:"gen" ~device () in
   let generator = create_generator generator_vs in

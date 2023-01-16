@@ -27,7 +27,7 @@ let () =
   then Printf.failwithf "usage: %s resnet18.ot input.png" Sys.argv.(0) ();
   let image = Imagenet.load_image Sys.argv.(2) in
   let vs = Var_store.create ~name:"rn" ~device:Cpu () in
-  let model =
+  let model (* : x:{ v:tensor | len v.shape = 4 && nth 1 v.shape = 3 } -> ~is_training:bool -> tensor([nth 0 x.shape; 1000]) *) =
     match Caml.Filename.basename Sys.argv.(1) with
     | "vgg11.ot" -> Vgg.vgg11 vs ~num_classes:1000
     | "vgg13.ot" -> Vgg.vgg13 vs ~num_classes:1000

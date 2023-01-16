@@ -147,7 +147,7 @@ let predict ~input_ ~enc ~dec:(dec : { v:D.t | v.hidden_size = enc.hidden_size }
         (loop hidden (idx + 1) (out :: outs))
     in loop Enc.(enc.zero_state) 0 []
   in
-  let enc_outputs : tensor([1; len input_; enc.hidden_size]) = Tensor.stack enc_outputs ~dim:1 in (* ANNOT (imprecise type of primitive function): 1 *)
+  let enc_outputs : tensor([1; nth 1 v.shape; enc.hidden_size]) = Tensor.stack enc_outputs ~dim:1 in (* ANNOT (imprecise type of primitive function): 1 *)
   let dec_state = Enc.to_tensor enc_final |> D.of_tensor in
   let rec loop : ~state:tensor([1; enc.hidden_size]) -> ~prevs:list ({ v:tensor | prod v.shape = 1 }) -> ~max_length:int -> list ({ v:tensor | prod v.shape = 1 }) (* ANNOT (recursion): 3 *)
   = fun ~state ~prevs ~max_length ->
@@ -175,7 +175,7 @@ let train_loss ~input_ ~target ~enc ~dec:(dec : { v:D.t | v.hidden_size = enc.hi
         loop hidden (idx + 1) (out :: outs)
     in loop Enc.(enc.zero_state) 0 []
   in
-  let enc_outputs : tensor([1; len input_; enc.hidden_size]) = Tensor.stack enc_outputs ~dim:1 in (* ANNOT (imprecise type of primitive function): 1 *)
+  let enc_outputs : tensor([1; nth 1 v.shape; enc.hidden_size]) = Tensor.stack enc_outputs ~dim:1 in (* ANNOT (imprecise type of primitive function): 1 *)
   (* When [use_teacher_forcing] is [true], use the target words as input
      for each step of the decoder rather than the decoder output for the
      previous step. *)
